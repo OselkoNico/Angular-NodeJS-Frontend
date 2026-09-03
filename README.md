@@ -1,59 +1,157 @@
-# Frontend
+# Gestión de Proveedores
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.19.
+Aplicación web CRUD para gestionar un catálogo de proveedores: alta, listado,
+modificación y baja. Frontend en Angular 21 y API REST en Node.js con Express.
 
-## Development server
+- **Frontend:** este repositorio
+- **Backend:** [Angular-NodeJS-Backend](https://github.com/OselkoNico/Angular-NodeJS-Backend)
 
-To start a local development server, run:
+## Stack
 
-```bash
-ng serve
-```
+| Capa        | Tecnología                                                               |
+| ----------- | ------------------------------------------------------------------------ |
+| Frontend    | Angular 21 (standalone components, signals, control flow `@if` / `@for`) |
+| Formularios | Reactive Forms                                                           |
+| Backend     | Node.js + Express 5 (ESM)                                                |
+| Tests       | Vitest                                                                   |
+| Lenguaje    | TypeScript 5.9                                                           |
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Puesta en marcha
 
-## Code scaffolding
+Requiere Node.js 20 o superior.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+**1. Levantar la API** (puerto 3000):
 
 ```bash
-ng build
+cd Backend
+npm install
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+**2. Levantar el frontend** (puerto 4200), en otra terminal:
 
 ```bash
-ng test
+npm install
+npm start
 ```
 
-## Running end-to-end tests
+Abrir <http://localhost:4200>.
 
-For end-to-end (e2e) testing, run:
+## Funcionalidad
+
+- **Inicio** (`/`) — pantalla de bienvenida con acceso a las dos secciones.
+- **Añadir** (`/crear`) — formulario de alta con validación de campos obligatorios.
+- **Listado** (`/proveedores`) — tabla de proveedores con acciones de modificar y eliminar.
+- **Modificar** (`/modificar/:cif`) — el mismo formulario, precargado con los datos del proveedor.
+
+Los errores devueltos por la API (CIF duplicado, proveedor inexistente, servidor
+caído) se muestran en pantalla en lugar de fallar en silencio. Cualquier ruta no
+reconocida redirige a Inicio.
+
+## API REST
+
+Base: `http://localhost:3000/proveedores`
+
+| Método   | Ruta    | Descripción                  | Respuestas                               |
+| -------- | ------- | ---------------------------- | ---------------------------------------- |
+| `GET`    | `/`     | Lista todos los proveedores  | `200`                                    |
+| `GET`    | `/:cif` | Obtiene un proveedor por CIF | `200`, `404`                             |
+| `POST`   | `/`     | Crea un proveedor            | `201`, `400` si falta el CIF o ya existe |
+| `PUT`    | `/:cif` | Modifica un proveedor        | `200`, `400`, `404`                      |
+| `DELETE` | `/:cif` | Elimina un proveedor         | `200`, `404`                             |
+
+El CIF actúa como identificador y no es modificable: el `PUT` lo descarta del
+cuerpo de la petición.
+
+Modelo de proveedor:
+
+```ts
+interface Proveedor {
+  cif: string;
+  name: string;
+  activity: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  phone: string;
+}
+```
+
+## Estructura
+
+```
+src/app/
+├── app.routes.ts          # Rutas + comodín que redirige a Inicio
+├── app.config.ts          # Providers (router, HttpClient)
+├── proveedores.ts         # Servicio HTTP contra la API
+├── models/proveedor.ts    # Interfaces del modelo y de las respuestas
+├── inicio/                # Pantalla de bienvenida
+├── proveedores/           # Listado con acciones
+└── proveedor/             # Formulario de alta y modificación
+```
+
+## Nota técnica: detección de cambios sin Zone.js
+
+Angular 21 no incluye `zone.js` por defecto, así que la aplicación se ejecuta en
+**modo zoneless**. Esto cambia una regla fundamental: el framework ya no parchea
+`setTimeout`, promesas ni observables, y solo repinta cuando algo se lo notifica
+explícitamente.
+
+**Notifican:** escribir en un `signal` leído por la plantilla, el pipe `async`,
+los eventos de plantilla (`(click)`, `routerLink`) y `ChangeDetectorRef.markForCheck()`.
+
+**No notifican:** asignar a una propiedad normal dentro de un `subscribe`,
+un `setTimeout` o un `.then()`.
+
+Por eso el estado que llega de forma asíncrona vive en signals:
+
+```ts
+proveedores = signal<Proveedor[]>([]);
+
+ngOnInit(): void {
+  this.proveedoresService.getProviders().subscribe({
+    next: (respuesta) => this.proveedores.set(respuesta.proveedores),
+    error: () => this.error.set('No se pudo conectar con el servidor.')
+  });
+}
+```
+
+Con una propiedad normal (`this.proveedores = respuesta.proveedores`) los datos
+llegan del servidor pero la tabla nunca se pinta. El síntoma es
+característico: la lista aparece vacía aunque la API devuelva registros, y al
+eliminar hay que pulsar el botón dos veces — el primer clic ejecuta el borrado
+y el segundo, al ser un evento de plantilla, es el que fuerza el repintado.
+
+### Cómo se detecta en los tests
+
+`src/app/proveedores/proveedores.spec.ts` cubre este caso, con una particularidad:
+**un stub síncrono con `of(...)` no reproduce el fallo**, porque el dato llega
+antes del primer render y el `fixture` dispara la detección de cambios a mano.
+La respuesta tiene que emitirse _después_ del primer render, como haría una
+respuesta HTTP real:
+
+```ts
+const html = fixture.nativeElement as HTMLElement;
+respuesta$.next({ message: 'Ok', proveedores: [PROVEEDOR] });
+await fixture.whenStable();
+
+expect(html.querySelectorAll('tbody tr').length).toBe(1);
+```
+
+La aserción va contra el **DOM**, no contra las propiedades del componente: un
+`expect(component.proveedores)` pasaría igualmente con la aplicación rota,
+porque el dato sí llega — lo que no ocurre es el pintado.
+
+## Tests
 
 ```bash
-ng e2e
+npm test
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Limitaciones conocidas
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **Los datos se guardan en memoria.** El backend mantiene un array en el
+  proceso, así que al reiniciar el servidor se pierde todo. Migrar a una base de
+  datos es el siguiente paso natural.
+- Sin autenticación ni control de acceso.
+- Sin paginación en el listado.
