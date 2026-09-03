@@ -1,0 +1,144 @@
+.proveedores-container {
+    min-height: 100vh;
+    padding: 50px 30px;
+    background: #f3f8fc;
+    color: #26384a;
+}
+
+/* Tabla */
+
+.tabla-proveedores {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: #ffffff;
+    border: 1px solid #d4e5ef;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(45, 90, 120, 0.08);
+}
+
+.tabla-proveedores th {
+    padding: 16px 12px;
+    background: #dcecf7;
+    color: #285b7a;
+    text-align: left;
+    font-weight: 600;
+}
+
+.tabla-proveedores td {
+    padding: 14px 12px;
+    border-top: 1px solid #e2edf3;
+}
+
+.tabla-proveedores tbody tr {
+    transition: 0.2s;
+}
+
+.tabla-proveedores tbody tr:hover {
+    background: #f4f9fc;
+}
+
+/* Acciones */
+
+.acciones {
+    white-space: nowrap;
+}
+
+/* Botones */
+
+.btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-modificar {
+    margin-right: 8px;
+    background: #8bbbd2;
+    color: #ffffff;
+}
+
+.btn-modificar:hover {
+    background: #6fa8c3;
+    transform: translateY(-2px);
+}
+
+.btn-eliminar {
+    background: #d99a9a;
+    color: #ffffff;
+}
+
+.btn-eliminar:hover {
+    background: #c98282;
+    transform: translateY(-2px);
+}
+
+/* Sin proveedores */
+
+.sin-proveedores {
+    max-width: 600px;
+    margin: 100px auto;
+    padding: 40px;
+    background: #ffffff;
+    border: 1px solid #d4e5ef;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(45, 90, 120, 0.08);
+}
+
+.sin-proveedores h2 {
+    margin-bottom: 10px;
+    color: #285b7a;
+}
+
+.sin-proveedores p {
+    margin: 0;
+    color: #60788a;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 60px;
+    margin: -50px -30px 50px;
+    background: #dcecf7;
+    border-bottom: 1px solid #c4ddeb;
+}
+
+.titulo {
+    margin: 0;
+    color: #285b7a;
+    font-size: 26px;
+}
+
+.navegacion {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-enlace {
+    padding: 10px 16px;
+    color: #285b7a;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.nav-enlace:hover {
+    background: #c7dfed;
+}
+.mensaje-error {
+    color: #b00020;
+    background: #fdecea;
+    border: 1px solid #f5c2c0;
+    border-radius: 4px;
+    padding: 0.6rem 0.8rem;
+    margin: 0.5rem 0;
+}

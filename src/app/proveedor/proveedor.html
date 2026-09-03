@@ -1,0 +1,66 @@
+<div class="formulario-container">
+
+    <header class="header">
+        <h1 class="titulo">Gestión de Proveedores</h1>
+
+        <nav class="navegacion">
+            <a class="nav-enlace" routerLink="/">
+                Inicio
+            </a>
+
+            <a class="nav-enlace" routerLink="/crear">
+                Añadir
+            </a>
+
+            <a class="nav-enlace" routerLink="/proveedores">
+                Modificar / eliminar
+            </a>
+        </nav>
+    </header>
+
+    <main>
+
+        @if (esModificacion()) {
+            <h1 class="formulario-titulo">Modificar proveedor</h1>
+        } @else {
+            <h1 class="formulario-titulo">Añadir proveedor</h1>
+        }
+
+        <form
+            class="formulario"
+            [formGroup]="formFormulario"
+            (ngSubmit)="guardar()"
+        >
+            <label for="cif">CIF</label>
+            <input id="cif" type="text" formControlName="cif">
+
+            <label for="name">Nombre de la empresa</label>
+            <input id="name" type="text" formControlName="name">
+
+            <label for="activity">Actividad</label>
+            <input id="activity" type="text" formControlName="activity">
+
+            <label for="address">Dirección</label>
+            <input id="address" type="text" formControlName="address">
+
+            <label for="city">Ciudad</label>
+            <input id="city" type="text" formControlName="city">
+
+            <label for="postalCode">Código postal</label>
+            <input id="postalCode" type="text" formControlName="postalCode">
+
+            <label for="phone">Teléfono</label>
+            <input id="phone" type="text" formControlName="phone">
+
+            @if (error()) {
+                <p class="mensaje-error">{{ error() }}</p>
+            }
+
+            <button type="submit" class="btn btn-principal">
+                {{ esModificacion() ? 'Modificar' : 'Añadir' }}
+            </button>
+        </form>
+
+    </main>
+
+</div>
