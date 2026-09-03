@@ -26,8 +26,6 @@ export const routes: Routes = [
         component: ProveedorComponent
     },
 
-    // Cualquier otra URL (una guardada en el navegador, un enlace roto)
-    // vuelve a Inicio en vez de dejar la página en blanco.
     {
         path: '**',
         redirectTo: ''

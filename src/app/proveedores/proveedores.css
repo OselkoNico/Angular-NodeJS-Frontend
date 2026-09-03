@@ -5,8 +5,6 @@
     color: #26384a;
 }
 
-/* Tabla */
-
 .tabla-proveedores {
     width: 100%;
     max-width: 1200px;
@@ -40,13 +38,9 @@
     background: #f4f9fc;
 }
 
-/* Acciones */
-
 .acciones {
     white-space: nowrap;
 }
-
-/* Botones */
 
 .btn {
     padding: 8px 14px;
@@ -78,8 +72,6 @@
     background: #c98282;
     transform: translateY(-2px);
 }
-
-/* Sin proveedores */
 
 .sin-proveedores {
     max-width: 600px;
@@ -134,6 +126,7 @@
 .nav-enlace:hover {
     background: #c7dfed;
 }
+
 .mensaje-error {
     color: #b00020;
     background: #fdecea;

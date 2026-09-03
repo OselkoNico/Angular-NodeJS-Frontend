@@ -4,8 +4,6 @@
     color: #26384a;
 }
 
-/* Encabezado */
-
 .header {
     display: flex;
     justify-content: space-between;
@@ -38,15 +36,11 @@
     background: #c7dfed;
 }
 
-/* Contenido principal */
-
 .contenido-inicio {
     max-width: 1000px;
     margin: 0 auto;
     padding: 80px 30px;
 }
-
-/* Presentación */
 
 .presentacion {
     text-align: center;
@@ -64,8 +58,6 @@
     color: #60788a;
     font-size: 18px;
 }
-
-/* Tarjetas */
 
 .opciones {
     display: grid;
