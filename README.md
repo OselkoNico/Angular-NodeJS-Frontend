@@ -48,6 +48,19 @@ Los errores devueltos por la API (CIF duplicado, proveedor inexistente, servidor
 caído) se muestran en pantalla en lugar de fallar en silencio. Cualquier ruta no
 reconocida redirige a Inicio.
 
+## Decisiones de diseño
+
+**Un único componente de formulario para alta y modificación.** Las rutas
+`/crear` y `/modificar/:cif` comparten `ProveedorComponent` en lugar de
+duplicarlo en dos componentes. El modo se determina por la presencia del
+parámetro de ruta `:cif`: si existe, se cargan los datos del proveedor desde
+la API y el formulario funciona en modo modificación; si no, funciona como
+alta.
+
+Ambos casos usan los mismos siete campos, las mismas validaciones y los
+mismos estilos, por lo que separarlos habría duplicado plantilla, CSS y
+lógica sin aportar diferencias funcionales.
+
 ## API REST
 
 Base: `http://localhost:3000/proveedores`
